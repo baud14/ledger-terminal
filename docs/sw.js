@@ -4,10 +4,13 @@
 // - card images (assets.tcgdex.net): CacheFirst with LRU cap
 // - api.tcgdex.net: never cached (always live; app has its own catalog fallback)
 
-const VERSION = "v1";
+const VERSION = "v2";
 const SHELL_CACHE = `lt-shell-${VERSION}`;
 const DATA_CACHE = "lt-data-v1";
 const IMG_CACHE = "lt-img-v1";
+// OCR engine (~9MB) lives in its own cache so shell VERSION bumps never
+// force it to re-download; bump this name only if the vendored files change.
+const VENDOR_CACHE = "lt-vendor-v1";
 const IMG_MAX_ENTRIES = 300;
 
 const SHELL = [
@@ -36,6 +39,7 @@ const SHELL = [
   "./src/screens/sets.js",
   "./src/screens/news.js",
   "./src/screens/learn.js",
+  "./src/scan.js",
   "./icons/icon-192.png",
   "./icons/apple-touch-icon.png",
 ];
@@ -99,6 +103,18 @@ self.addEventListener("fetch", e => {
   if (url.origin === location.origin) {
     if (url.pathname.includes("/data/")) {
       e.respondWith(networkFirst(e.request, DATA_CACHE));
+      return;
+    }
+    if (url.pathname.includes("/vendor/")) {
+      // OCR assets: CacheFirst into the persistent vendor cache
+      e.respondWith((async () => {
+        const cache = await caches.open(VENDOR_CACHE);
+        const cached = await cache.match(e.request);
+        if (cached) return cached;
+        const resp = await fetch(e.request);
+        if (resp.ok) cache.put(e.request, resp.clone());
+        return resp;
+      })());
       return;
     }
     // shell: cache first, network fallback (and populate on miss)

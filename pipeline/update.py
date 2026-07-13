@@ -109,7 +109,9 @@ def fetch_all_sets():
         cached = cache.get(sid)
         # Re-fetch uncached sets, and recently released/future sets whose card
         # lists may still be growing (cache entries carry a fetchedAt stamp).
-        needs_fetch = cached is None
+        # "countOfficial" added later (printed denominator, e.g. the 191 in
+        # "238/191") — force a one-time refetch of cache entries without it.
+        needs_fetch = cached is None or "countOfficial" not in cached
         if cached and cached.get("releaseDate"):
             rel = cached["releaseDate"]
             fresh_window = (date.today() - timedelta(days=45)).isoformat()
@@ -129,6 +131,7 @@ def fetch_all_sets():
                 "serieName": (d.get("serie") or {}).get("name"),
                 "logo": d.get("logo"),
                 "cardCount": (d.get("cardCount") or {}).get("total"),
+                "countOfficial": (d.get("cardCount") or {}).get("official"),
                 "cards": [
                     {"id": c["id"], "localId": c.get("localId"),
                      "name": c.get("name"), "image": c.get("image")}
@@ -485,17 +488,43 @@ def main():
                    {"fetchedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                     "items": items})
 
-    # catalog-lite.json — offline/CORS-fallback search index
+    # catalog-lite.json — offline/CORS-fallback search index.
+    # "tot" = the set's printed/official card count (the 191 in "238/191") so
+    # the on-device card scanner can resolve a collector number to a card.
+    set_official = {s["id"]: s.get("countOfficial") for s in all_sets}
     write_json(os.path.join(DATA_DIR, "catalog-lite.json"),
                [{"id": r["id"], "n": r["n"], "set": r["set"],
                  "setName": set_names.get(r["set"], r["set"]),
-                 "num": r["num"], "r": r["r"], "img": r["img"],
+                 "num": r["num"], "tot": set_official.get(r["set"]),
+                 "r": r["r"], "img": r["img"],
                  "px": r["px"], "pxv": r["pxv"]} for r in records])
+
+    # scan-index.json — EVERY English card, for the camera scanner + card-# lookup.
+    # catalog-lite only holds the ~1.9k priced cards of the tracked universe; a
+    # kid's binder is mostly older sets, so identification needs the full index.
+    # Compact by construction: card id is always "<setId>-<localId>", and the
+    # image URL is always "<set image prefix>/<localId>" — so neither is stored.
+    scan_sets, scan_cards = {}, []
+    for s in all_sets:
+        prefix = None
+        for c in s.get("cards") or []:
+            img, lid = c.get("image"), c.get("localId")
+            if img and lid and img.endswith(f"/{lid}"):
+                prefix = img[: -(len(str(lid)) + 1)]
+                break
+        scan_sets[s["id"]] = {"n": s.get("name"), "t": s.get("countOfficial"), "p": prefix}
+        for c in s.get("cards") or []:
+            if c.get("localId"):
+                scan_cards.append([s["id"], str(c["localId"]), c.get("name")])
+    write_json(os.path.join(DATA_DIR, "scan-index.json"),
+               {"sets": scan_sets, "cards": scan_cards})
+    log(f"scan-index: {len(scan_cards)} cards across {len(scan_sets)} sets")
 
     write_json(os.path.join(DATA_DIR, "meta.json"), {
         "schemaVersion": 1,
         "lastUpdated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "universe": {"sets": len(recent_sets), "cards": len(records)},
+        "scanIndex": {"sets": len(scan_sets), "cards": len(scan_cards)},
         "snapshotDays": len(snap_dates),
     })
 

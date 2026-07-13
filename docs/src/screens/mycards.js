@@ -53,8 +53,10 @@ export async function renderMyCards(el) {
   }).join("") : "";
 
   el.innerHTML = `
+    <button class="btn" id="scan-card" style="width:100%">⌾ SCAN A CARD WITH THE CAMERA</button>
     <div class="hdr">SEARCH THE EXCHANGE</div>
     <input type="search" id="card-q" placeholder="TYPE A POKÉMON NAME… (e.g. CHARIZARD)" autocomplete="off">
+    <input type="search" id="card-num-q" placeholder="OR THE CARD # … (e.g. 238/191)" autocomplete="off" style="margin-top:8px">
     <div id="q-results" class="panel" style="padding:2px 8px;margin-top:8px;display:none"></div>
 
     ${pf.rows.length ? `
@@ -70,8 +72,14 @@ export async function renderMyCards(el) {
     : `
       <div class="empty" style="margin-top:24px">
         <div class="big">YOUR TRADING FLOOR IS EMPTY</div>
-        <div class="dim" style="font-size:.75rem">Search for a card you own above, tap it, and hit ＋ ADD TO MY CARDS.<br><br>Your collection lives only on this phone — nobody else can see it.</div>
+        <div class="dim" style="font-size:.75rem">Scan a card with the camera, or search for it above, tap it, and hit ＋ ADD TO MY CARDS.<br><br>Your collection lives only on this phone — nobody else can see it.</div>
       </div>`}`;
+
+  // camera scanner (module + OCR assets load lazily on first tap)
+  el.querySelector("#scan-card").addEventListener("click", async () => {
+    const { openScanner } = await import("../scan.js");
+    openScanner();
+  });
 
   // search wiring (debounced)
   const q = el.querySelector("#card-q");
@@ -91,6 +99,24 @@ export async function renderMyCards(el) {
         : `<div class="dim" style="padding:10px;font-size:.72rem">NO MATCHES — CHECK THE SPELLING?</div>`;
       wireCardRows(results);
     }, 350);
+  });
+
+  // card-number quick add ("238/191", "SV107") — same matcher as the scanner
+  const nq = el.querySelector("#card-num-q");
+  let ntimer = null;
+  nq.addEventListener("input", () => {
+    clearTimeout(ntimer);
+    const text = nq.value.trim();
+    if (text.length < 2) { if (!q.value.trim()) results.style.display = "none"; return; }
+    ntimer = setTimeout(async () => {
+      const { quickMatch } = await import("../scan.js");
+      const hits = await quickMatch(text, 6);
+      results.style.display = "block";
+      results.innerHTML = hits.length
+        ? hits.map(h => cardRow(h, { sub: `${h.setName || ""} · #${h.num || "?"}${h.tot ? "/" + h.tot : ""}` })).join("")
+        : `<div class="dim" style="padding:10px;font-size:.72rem">NO MATCH — try the full number like 238/191, or the name search above.</div>`;
+      wireCardRows(results);
+    }, 300);
   });
 
   // holdings wiring: qty steppers (stopPropagation) + row tap -> modal

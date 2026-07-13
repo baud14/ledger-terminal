@@ -1,7 +1,7 @@
 // Live TCGdex client (search + pricing) with graceful fallback to the
 // published catalog when offline / API unreachable.
 
-import { searchCatalog, getCatalogCard } from "./catalog.js";
+import { searchCatalog, getCatalogCard, getScanCard } from "./catalog.js";
 
 const API = "https://api.tcgdex.net/v2/en";
 let apiDown = false; // session flag — flip on first failure, retry next launch
@@ -69,8 +69,11 @@ export async function getCard(id) {
     }
   }
   const c = await getCatalogCard(id);
-  if (!c) return null;
-  return { ...c, p: c.px != null && c.pxv ? { [c.pxv]: c.px } : {}, live: false };
+  if (c) return { ...c, p: c.px != null && c.pxv ? { [c.pxv]: c.px } : {}, live: false };
+  // Scanned cards are usually outside the priced universe — fall back to the
+  // full scan index so they can still be identified and added (without a quote).
+  const s = await getScanCard(id).catch(() => null);
+  return s ? { ...s, p: {}, live: false } : null;
 }
 
 // Price a set of holdings: {cardId: {px, pxv}} — live where possible.

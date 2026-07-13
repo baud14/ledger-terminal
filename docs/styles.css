@@ -228,3 +228,19 @@ input:focus { border-color: var(--amber); }
 /* confetti */
 .confetti { position: fixed; top: -12px; z-index: 130; font-size: 1.1rem; animation: fall linear forwards; pointer-events: none; }
 @keyframes fall { to { transform: translateY(105dvh) rotate(560deg); opacity: .7; } }
+
+/* LDGR VISION — card scanner */
+.scan-modal { max-height: 88dvh; overflow-y: auto; }
+.scan-view { position: relative; border-radius: 8px; overflow: hidden; background: #000; border: 1px solid var(--line); }
+.scan-view video { display: block; width: 100%; max-height: 46dvh; object-fit: cover; }
+.scan-guide {
+  position: absolute; inset: 8% 16%; border-radius: 10px; pointer-events: none;
+  border: 2px solid var(--amber); box-shadow: 0 0 0 999px rgba(0, 0, 0, .35); overflow: hidden;
+}
+.scan-line {
+  position: absolute; left: 0; right: 0; height: 2px; background: var(--green);
+  box-shadow: 0 0 8px var(--green); animation: scanline 2.2s ease-in-out infinite;
+}
+@keyframes scanline { 0%, 100% { top: 4%; } 50% { top: 94%; } }
+.scan-bar { height: 8px; border: 1px solid var(--amber-dim); border-radius: 4px; overflow: hidden; background: #000; }
+.scan-bar > div { height: 100%; background: var(--amber); transition: width .2s; }

@@ -1,6 +1,7 @@
 // SETS — release countdowns + chase-card leaderboards per set + icons board.
 
 import { getSets, getBoards } from "../api/data.js";
+import { listCatalog } from "../api/catalog.js";
 import { cardRow, wireCardRows } from "../ui/cards.js";
 import { daysUntil, fmtDateShort, esc } from "../ui/format.js";
 
@@ -28,6 +29,8 @@ export async function renderSets(el) {
       <summary>${esc(s.setName.toUpperCase())} <span class="dim" style="font-weight:400">· ${fmtDateShort(s.releaseDate)}</span></summary>
       <div class="lbody" style="padding:2px 8px">
         ${s.top.map((c, j) => cardRow(c, { sub: `#${j + 1} CHASE · ${c.r || ""}` })).join("")}
+        <button class="btn ghost" data-browse-set="${esc(s.setId)}" style="width:100%;margin:8px 0">▦ BROWSE THE WHOLE SET${s.cardCount ? ` (${s.cardCount} CARDS)` : ""}</button>
+        <div data-set-grid="${esc(s.setId)}"></div>
       </div>
     </details>`).join("");
 
@@ -40,4 +43,28 @@ export async function renderSets(el) {
     ${setBoards}`;
 
   wireCardRows(el);
+
+  // "browse the whole set" — full card list from the offline catalog, tap to add
+  el.querySelectorAll("[data-browse-set]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const setId = btn.dataset.browseSet;
+      const grid = el.querySelector(`[data-set-grid="${CSS.escape(setId)}"]`);
+      if (!grid) return;
+      if (grid.innerHTML) { grid.innerHTML = ""; btn.textContent = btn.textContent.replace("▲ HIDE", "▦ BROWSE"); return; }
+      btn.textContent = btn.textContent.replace("▦ BROWSE", "▲ HIDE");
+      const all = (await listCatalog()).filter(c => c.set === setId);
+      const numKey = c => {
+        const digits = String(c.num || "").replace(/\D/g, "");
+        return [digits ? parseInt(digits, 10) : 9999, String(c.num || "")];
+      };
+      all.sort((a, b) => {
+        const [na, sa] = numKey(a), [nb, sb] = numKey(b);
+        return na - nb || sa.localeCompare(sb);
+      });
+      grid.innerHTML = all.map(c =>
+        cardRow(c, { sub: `#${c.num || "?"}${c.tot ? "/" + c.tot : ""}${c.r ? " · " + c.r.toUpperCase() : ""}` })).join("")
+        || `<div class="dim" style="padding:8px;font-size:.72rem">Card list not available offline yet.</div>`;
+      wireCardRows(grid);
+    });
+  });
 }
