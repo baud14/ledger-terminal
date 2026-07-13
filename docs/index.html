@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0e0a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LDGR TERM">
+<title>The Ledger Terminal</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/favicon.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div id="scanlines" aria-hidden="true"></div>
+
+<header id="topbar">
+  <div id="ticker-wrap" aria-label="market ticker">
+    <div id="ticker" class="ticker-track"></div>
+  </div>
+</header>
+
+<main id="screen" role="main"></main>
+
+<nav id="tabbar" role="tablist" aria-label="terminal functions">
+  <a href="#/home"   data-tab="home"   role="tab"><span class="fkey">F1</span>HOME</a>
+  <a href="#/movers" data-tab="movers" role="tab"><span class="fkey">F2</span>MOVERS</a>
+  <a href="#/cards"  data-tab="cards"  role="tab"><span class="fkey">F3</span>MY CARDS<span class="tab-dot" id="cards-dot" hidden></span></a>
+  <a href="#/sets"   data-tab="sets"   role="tab"><span class="fkey">F4</span>SETS</a>
+  <a href="#/news"   data-tab="news"   role="tab"><span class="fkey">F5</span>NEWS</a>
+  <a href="#/learn"  data-tab="learn"  role="tab"><span class="fkey">F6</span>LEARN</a>
+</nav>
+
+<div id="modal-root"></div>
+<div id="toast-root" aria-live="polite"></div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

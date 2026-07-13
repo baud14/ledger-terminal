@@ -1,0 +1,5 @@
+pipeline/snapshots/
+pipeline/state/
+*.log
+.env
+.DS_Store

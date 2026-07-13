@@ -1,0 +1,95 @@
+{
+  "modules": [
+    {
+      "title": "Why are some cards worth money?",
+      "body": [
+        "A card is worth what someone will pay for it. That's the whole secret. Prices on this terminal come from real marketplaces where thousands of people buy and sell cards every day.",
+        "Three things push a price up: <b>rarity</b> (how hard it is to pull from a pack), <b>demand</b> (how many people want it — Charizard always has demand), and <b>condition</b> (a beat-up card is worth a fraction of a clean one).",
+        "When more people want a card than there are cards for sale, the price rises. When everyone's selling and nobody's buying, it falls. You're watching that battle live on the MOVERS screen."
+      ],
+      "quiz": [
+        {
+          "q": "What actually decides a card's price?",
+          "options": ["The Pokémon's HP", "What buyers are willing to pay", "How shiny it looks"],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "title": "Rarity symbols — read the card",
+      "body": [
+        "Look at the bottom corner of a card: ● circle = common, ◆ diamond = uncommon, ★ star = rare. That's the basic ladder.",
+        "Modern sets go way past the star: <b>double rare</b> (two stars — the ex cards), <b>ultra rare</b> (full-art), <b>illustration rare</b>, and the big one — <b>special illustration rare (SIR)</b>, the beautiful extended-art cards that are usually a set's most valuable chase cards.",
+        "Gold cards (hyper rares) look wild but SIRs usually beat them in price — collectors love the art more than the gold."
+      ],
+      "quiz": [
+        {
+          "q": "Which is usually a set's most valuable card type?",
+          "options": ["Common ●", "Special Illustration Rare", "Any gold card"],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "title": "Holo, reverse holo, and variants",
+      "body": [
+        "The SAME card can exist in several versions, each with its own price. <b>Holo</b>: the picture sparkles. <b>Reverse holo</b>: everything EXCEPT the picture sparkles. <b>Normal</b>: no sparkle.",
+        "That's why the terminal asks which variant you own when you add a card — a holo can be worth 10× the normal version of the exact same card.",
+        "Old cards have a special variant: <b>1st Edition</b> (a little '1' stamp under the picture). A 1st Edition Base Set Charizard is one of the most valuable Pokémon cards on Earth."
+      ],
+      "quiz": [
+        {
+          "q": "A holo and a normal version of the same card are worth…",
+          "options": ["Always the same", "Different prices — holo usually more", "Nothing unless graded"],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "title": "Condition is everything — protect your cards",
+      "body": [
+        "Traders grade condition from <b>NM</b> (Near Mint — looks fresh from the pack) down through <b>LP</b> (Lightly Played), <b>MP</b> (Moderately Played) to <b>HP</b> (Heavily Played). Prices on this terminal are for NM cards — a scratched card can be worth 50% less or worse.",
+        "The moment you pull a good card: <b>sleeve it</b> (penny sleeves cost pennies), and put the best ones in a <b>top loader</b> — a hard plastic case.",
+        "Never: rubber-band a stack, shuffle valuable cards without sleeves, or leave cards in the sun (they fade and warp)."
+      ],
+      "quiz": [
+        {
+          "q": "You pull a chase card. First move?",
+          "options": ["Show everyone by passing it around", "Sleeve it", "Stick it in your pocket"],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "title": "Grading — the PSA 10 dream",
+      "body": [
+        "Grading companies (PSA is the most famous, also BGS and CGC) examine a card under magnification and seal it in a case with a score from 1 to 10.",
+        "A <b>PSA 10</b> (Gem Mint) can be worth 3–10× the raw card price. A PSA 10 Base Set Charizard has sold for hundreds of thousands of dollars.",
+        "The catch: grading costs money ($15–25+ per card) and takes weeks, and if your card comes back a 7, you may have paid more than the value it added. Traders only grade cards that look PERFECT and are worth real money raw."
+      ],
+      "quiz": [
+        {
+          "q": "What's a PSA 10?",
+          "options": ["A card with 10 HP", "A perfect Gem Mint grade", "A pack of 10 cards"],
+          "answer": 1
+        }
+      ]
+    },
+    {
+      "title": "Talk like a trader",
+      "body": [
+        "<b>Portfolio</b> — everything you own, valued together. Yours is on the MY CARDS screen.",
+        "<b>Bull market</b> — prices rising (▲ green). <b>Bear market</b> — prices falling (▼ red). One card going up doesn't make a bull market; watch the whole board.",
+        "<b>Chase card</b> — the card everyone rips packs hoping to hit. <b>Diversify</b> — don't put everything into one card; if it drops, your whole portfolio drops with it.",
+        "<b>Buy the dip / take profits</b> — traders buy when a card they believe in falls, and sell part when it spikes. You don't have to trade at all — plenty of the best collectors just collect what they love. The value chart is the bonus."
+      ],
+      "quiz": [
+        {
+          "q": "Prices falling across the whole market is called…",
+          "options": ["A bear market", "A bull market", "A Snorlax market"],
+          "answer": 0
+        }
+      ]
+    }
+  ]
+}

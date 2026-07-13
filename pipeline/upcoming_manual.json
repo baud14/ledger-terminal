@@ -1,0 +1,8 @@
+{
+  "comment": "Manual set-release overrides — merged over API data, manual wins. Update when new sets are announced (source: PokeBeach / official).",
+  "upcoming": [
+    { "name": "Pitch Black",       "releaseDate": "2026-07-17" },
+    { "name": "30th Celebration",  "releaseDate": "2026-09-18" },
+    { "name": "Delta Reign",       "releaseDate": "2026-11-06" }
+  ]
+}
