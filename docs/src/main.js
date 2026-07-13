@@ -21,16 +21,30 @@ register("news", renderNews);
 register("learn", renderLearn);
 
 // First-run: ask for a first name (stays on this device only).
+// window.prompt is unreliable in iOS standalone PWAs — use an in-app panel.
 function ensureName() {
-  if (!localStorage.getItem("lt-trader-name")) {
-    const name = prompt("Welcome to THE LEDGER TERMINAL.\n\nWhat's your first name, trader?");
-    if (name && name.trim()) localStorage.setItem("lt-trader-name", name.trim().slice(0, 20));
-  }
+  if (localStorage.getItem("lt-trader-name")) return;
+  const root = document.getElementById("modal-root");
+  root.innerHTML = `<div class="modal-back"><div class="modal" style="border-radius:12px;margin:auto;max-width:340px">
+    <div class="brand">THE LEDGER TERMINAL <span class="cursor"></span></div>
+    <div class="dim" style="font-size:.75rem;margin:10px 0">Welcome to the trading floor. What's your first name, trader?</div>
+    <input type="text" id="fr-name" maxlength="20" placeholder="FIRST NAME" autocomplete="off">
+    <button class="btn" id="fr-go" style="width:100%;margin-top:10px">OPEN MY TERMINAL</button>
+    <div class="dim" style="font-size:.6rem;margin-top:8px">Stays on this phone only. Never sent anywhere.</div>
+  </div></div>`;
+  const save = () => {
+    const v = root.querySelector("#fr-name").value.trim();
+    localStorage.setItem("lt-trader-name", (v || "Trader").slice(0, 20));
+    root.innerHTML = "";
+    window.dispatchEvent(new Event("hashchange")); // re-render greeting
+  };
+  root.querySelector("#fr-go").addEventListener("click", save);
+  root.querySelector("#fr-name").addEventListener("keydown", e => { if (e.key === "Enter") save(); });
 }
 
 async function boot() {
-  ensureName();
   startRouter();
+  ensureName();
 
   // ticker + portfolio snapshot run in the background of first paint
   try {
